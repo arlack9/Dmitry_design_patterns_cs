@@ -1,4 +1,6 @@
-﻿namespace DesignPatterns;
+﻿using static DesignPatterns.ProductFilter;
+
+namespace DesignPatterns;
 
 public enum Color
 {
@@ -43,6 +45,20 @@ public class Demo
 
         var pf = new ProductFilter();
         Console.WriteLine("Green products (old)");
+        //foreach(var items in pf.F
+
+
+
+        //better filter
+        //using better filter
+        BetterFilter bf = new();
+        Console.WriteLine("Green products(new): ");
+
+        foreach(var item in bf.Filter(products, new ColorSpecification(Color.Green)))
+        {
+            Console.WriteLine($"- {item.Name} is green");
+        }
+
 
     }
 }
@@ -60,7 +76,7 @@ public class ProductFilter
 
     public IEnumerable<Product> FilterBySizeAndColor(IEnumerable<Product> products, Size size, Color color)
     {
-        foreach(var p in products)
+        foreach (var p in products)
         {
             if (p.Size == size && p.Color == color)
                 yield return p;
@@ -85,6 +101,44 @@ public class ProductFilter
 
     public class ColorSpecification : ISpecification<Product>
     {
+        private Color color;
+        public ColorSpecification(Color color)
+        {
+            this.color = color;
+        }
+        public bool IsSatisfied(Product t)
+        {
+            return t.Color == color;
+        }
 
     }
+
+
+    public class SizeSpecification : ISpecification<Product>
+    {
+        //Size size;
+
+        public SizeSpecification()
+        {
+
+        }
+
+        public bool IsSatisfied(Product t)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class BetterFilter : IFilter<Product>
+    {
+        public IEnumerable<Product> Filter(IEnumerable<Product> items, ISpecification<Product> spec)
+        {
+            foreach (var item in items)
+                if (spec.IsSatisfied(item))
+                    yield return item;
+        }
+    }
+
+
+   
 }
